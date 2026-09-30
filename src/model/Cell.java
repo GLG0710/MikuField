@@ -13,13 +13,6 @@ public class Cell {
         this.position = position;
     }
 
-    public void toggleFlag() {
-        if (this.isRevealed())
-            return;
-
-        flagged = !flagged; // If right click on flagged cell, it will be unflagged
-    }
-
     // Getters and Setters
     public boolean isRevealed() {
         return revealed;
@@ -32,6 +25,10 @@ public class Cell {
     public boolean isFlagged() {
         return flagged;
     }
+
+    public void setFlagged() { this.flagged = !flagged; }
+
+    public boolean isMine() { return value == -1; }
 
     public int getValue() {
         return value;

@@ -5,19 +5,40 @@ import model.utilities.Position;
 import java.util.*;
 
 public class Board {
-    private final int boardSize;
-    private final int numberOfMines;
+    private int boardSize;
+    private int numberOfMines;
 
     private Cell[][] boardMatrix;
     private final Set<Position> minesLocation = new HashSet<>();
 
+    // Determinate the victory conditional
+    private int cellsRemaining;
+    private int minesRemaining;
+
     private boolean gameOver = false;
+    private boolean victory = false;
 
-    public Board(Config config) {
-        this.boardSize = config.getBoardSize();
-        this.numberOfMines = (int) (config.getBoardSize() * config.getBoardSize() * config.getDifficulty());
+    public Board(int boardSize, double difficulty) {
+        reset(boardSize, difficulty);
+    }
 
+    // Setup
+    public void reset(int boardSize, double difficulty) {
+        resetStateAndCounters( boardSize,  difficulty);
         create();
+    }
+
+    private void resetStateAndCounters(int boardSize, double difficulty) {
+        this.boardSize = boardSize;
+        int allCells = boardSize * boardSize;
+        numberOfMines = (int) (allCells * difficulty);
+
+        minesLocation.clear();
+        gameOver = false;
+        victory = false;
+
+        cellsRemaining = allCells - numberOfMines;
+        minesRemaining = numberOfMines;
     }
 
     // Board create
@@ -112,6 +133,8 @@ public class Board {
             cell.setRevealed();
             cellsRevealed.add(cell);
         }
+
+        cellsRemaining -= cellsRevealed.size();
         return cellsRevealed;
     }
 
@@ -165,8 +188,43 @@ public class Board {
         return cellsRevealed;
     }
 
+    public Set<Cell> revealAllMines() {
+        Set<Cell> cellsRevealed = new HashSet<>();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                Cell cell = getCell(new Position(i,j));
+
+                if (cell.getValue() == -1 && !cell.isRevealed()) {
+                    boardMatrix[i][j].setRevealed();
+                    cellsRevealed.add(boardMatrix[i][j]);
+                }
+            }
+        }
+
+        return cellsRevealed;
+    }
+
+    // Flag system
+    public void toggleFlag(Cell cell) {
+        if (cell.isRevealed())
+            return;
+
+        if (cell.isFlagged() && cell.isMine()) {
+            minesRemaining++;
+        }
+        if (!cell.isFlagged() && cell.isMine()) {
+            if (--minesRemaining == 0 && cellsRemaining == 0) {
+                victory = true;
+            }
+        }
+
+        cell.setFlagged(); // If right click on flagged cell, it will be unflagged
+    }
 
     // Getters
+    public boolean isVictory() { return victory; }
+
     public boolean isGameOver() {
         return gameOver;
     }

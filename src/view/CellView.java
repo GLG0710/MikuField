@@ -15,12 +15,12 @@ public class CellView extends Button {
     private final Cell cell;
 
     // Background Colors
-    private static final String COLOR_DEFAULT = "#BEC8D1";
-    private static final String COLOR_BORDER = "#373B3E";
-    private static final String COLOR_MINE = "#E12885";
-    private static final String COLOR_FLAG = "#137A7F";
-    private static final String COLOR_ZERO = "#373B3E";
-    private static final String COLOR_NUMBER_BG = "#137A7F";
+    private static final String COLOR_DEFAULT = "#BEC8D1E6";
+    private static final String COLOR_BORDER = "#373B3EE6";
+    private static final String COLOR_MINE = "#E12885E6";
+    private static final String COLOR_FLAG = "#137A7FE6";
+    private static final String COLOR_ZERO = "#373B3EE6";
+    private static final String COLOR_NUMBER_BG = "#137A7FE6";
 
     // Text Colors
     private static final String[] TEXT_COLORS = {
@@ -98,16 +98,19 @@ public class CellView extends Button {
 
         Image image = new Image(
                 Objects.requireNonNull(
-                        getClass().getResourceAsStream(
-                                "/assets/imgs/bomb.png"
-                        ),
+                        getClass().getResourceAsStream("/assets/imgs/bomb.png"),
                         "Imagem /assets/imgs/bomb.png não encontrada!"
-                )
+                ),
+                256,
+                0,
+                true,
+                true
         );
 
         ImageView imageView = new ImageView(image);
 
         imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
 
         imageView.fitWidthProperty()
                 .bind(widthProperty().multiply(0.65));
@@ -131,12 +134,17 @@ public class CellView extends Button {
                                 "/assets/imgs/flag.png"
                         ),
                         "Imagem /assets/imgs/flag.png não encontrada!"
-                )
+                ),
+                256,
+                0,
+                true,
+                true
         );
 
         ImageView imageView = new ImageView(image);
 
         imageView.setPreserveRatio(true);
+        imageView.setSmooth(true);
 
         imageView.fitWidthProperty()
                 .bind(widthProperty().multiply(0.65));

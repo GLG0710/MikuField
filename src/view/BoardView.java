@@ -1,6 +1,8 @@
 package view;
 
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -11,6 +13,7 @@ import model.utilities.Position;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class BoardView extends StackPane {
@@ -23,7 +26,6 @@ public class BoardView extends StackPane {
     private final Map<Position, CellView> cellViews = new HashMap<>();
 
     public BoardView(Board board, Consumer<Cell> leftClick, Consumer<Cell> rightClick) {
-
         setMaxSize(MAX_SIZE, MAX_SIZE);
         setPrefSize(MAX_SIZE, MAX_SIZE);
 
@@ -34,6 +36,22 @@ public class BoardView extends StackPane {
 
         setStyle("-fx-background-color: #86CECB;");
 
+        ImageView bgImageView = new ImageView();
+        try {
+            Image bgImage = new Image(
+                    Objects.requireNonNull(
+                            getClass().getResourceAsStream("/assets/imgs/bg_miku.png")
+                    )
+            );
+            bgImageView.setImage(bgImage);
+            bgImageView.setFitWidth(400);
+            bgImageView.setFitHeight(400);
+            bgImageView.setPreserveRatio(false);
+            bgImageView.setSmooth(true);
+        } catch (Exception e) {
+            System.out.println("Imagem de fundo não encontrada, usando fundo padrão.");
+        }
+
         Rectangle border = new Rectangle(MAX_SIZE, MAX_SIZE);
         border.setFill(null);
         border.setStroke(Color.web("#373B3E"));
@@ -41,6 +59,7 @@ public class BoardView extends StackPane {
         border.setManaged(false);
         border.setMouseTransparent(true);
 
+        getChildren().add(bgImageView);
         getChildren().add(border);
         getChildren().add(grid);
 
@@ -76,4 +95,8 @@ public class BoardView extends StackPane {
             cellView.refresh();
         }
     }
+
+    public boolean isBoardVisible() { return grid.isVisible(); }
+
+    public void hideBoard(boolean hide) { grid.setVisible(hide); }
 }

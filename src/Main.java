@@ -4,12 +4,15 @@
     import javafx.stage.Stage;
     import model.Config;
     import model.Game;
+    import model.utilities.BoardSize;
+    import model.utilities.Difficulty;
 
     public class Main extends Application {
 
         @Override
         public void start(Stage stage) {
             Config config = new Config();
+            config.setBoardSize(BoardSize.BIG.size);
             Game game = new Game(config);
             GameController controller = new GameController(game);
 

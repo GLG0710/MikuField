@@ -1,12 +1,11 @@
 package controller;
 
 import javafx.scene.media.AudioClip;
-import model.Board;
 import model.Cell;
 import model.Config;
 import model.Game;
-import model.utilities.Position;
-import view.BoardView;
+import model.utilities.BoardSize;
+import model.utilities.Difficulty;
 import view.MainView;
 
 import java.net.URL;
@@ -21,9 +20,23 @@ public class GameController {
 
         this.mainView = new MainView(
                 game.getBoard(),
-                this::handleLeftClick,
-                this::handleRightClick
+                this::cellLeftClick,
+                this::cellRightClick,
+                this::selectDifficulty,
+                this::selectBoardSize,
+                this::startNewGame
         );
+    }
+
+
+    private void selectBoardSize(BoardSize boardSize) {
+        mainView.selectBoardSize(boardSize);
+        game.setBoardSize(boardSize);
+    }
+
+    private void selectDifficulty(Difficulty difficulty) {
+        mainView.selectDifficulty(difficulty);
+        game.setDifficulty(difficulty);
     }
 
     public MainView getView() {
@@ -31,30 +44,31 @@ public class GameController {
     }
 
     // Events
-    private void handleLeftClick(Cell cell) {
-        Board board = game.getBoard();
-
-        if (board.isGameOver()) {
+    private void cellLeftClick(Cell cell) {
+        if (game.isGameOver() || game.isVictory()) {
             return;
         }
 
-        Set<Cell> revealed = board.revealCell(cell.getPosition());
-
+        Set<Cell> revealed = game.revealCell(cell.getPosition());
         refreshCells(revealed);
 
-        if (board.isGameOver()) {
+        if (game.isGameOver()) {
             revealAllMines();
             playSound("/assets/sounds/boom.mp3");
         }
     }
 
-    private void handleRightClick(Cell cell) {
-        if (game.getBoard().isGameOver()) {
+    private void cellRightClick(Cell cell) {
+        if (game.isGameOver() || game.isVictory()) {
             return;
         }
 
-        cell.toggleFlag();
-        mainView.getBoardView().refresh(cell);
+        game.toggleFlag(cell);
+        refreshCells(Set.of(cell));
+
+        if (game.isVictory()) {
+            IO.println("VICTORY!");
+        }
     }
 
     public void playSound(String resourcePath) {
@@ -74,42 +88,17 @@ public class GameController {
     }
 
     // Update View
-    private void refreshCells(Set<Cell> cells) {
-        BoardView boardView = mainView.getBoardView();
-        for (Cell c : cells) {
-            boardView.refresh(c);   // BoardView acha o CellView pelo Position
-        }
-    }
+    private void refreshCells(Set<Cell> cells) { mainView.refreshCells(cells); }
 
     private void revealAllMines() {
-        Board board = game.getBoard();
-        BoardView boardView = mainView.getBoardView();
-        int size = board.getBoardSize();
-
-        for (int r = 0; r < size; r++) {
-            for (int c = 0; c < size; c++) {
-                Cell cell = board.getCell(new Position(r, c));
-                if (cell.getValue() == -1 && !cell.isRevealed()) {
-                    cell.setRevealed();
-                    boardView.refresh(cell);
-                }
-            }
-        }
+        Set<Cell> mines = game.revealAllMines();
+        mainView.refreshCells(mines);
     }
 
-    // New game, create!!
-    public void startNewGame(Config newConfig) {
-        game.startNewGame(newConfig);
+    // NewGame
+    private void startNewGame() {
+        game.startNewGame(game.getBoardSize(), game.getDifficulty());
 
-        // Como o Board é recriado, as CellViews antigas apontam para Cells mortas.
-        // É mais simples recriar a MainView inteira:
-        MainView fresh = new MainView(
-                game.getBoard(),
-                this::handleLeftClick,
-                this::handleRightClick
-        );
-
-        mainView.getChildren().setAll(fresh.getChildren());
-        // Ou melhor ainda: recrie a cena no App.
+        mainView.startNewBoard(game.getBoard());
     }
 }
