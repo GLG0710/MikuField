@@ -7,7 +7,7 @@ public enum Difficulty {
 
     public final double proportion;
 
-    private Difficulty(double proportion) {
+    Difficulty(double proportion) {
         this.proportion = proportion;
     }
 }

@@ -125,7 +125,7 @@ public class MainView extends Pane {
 
         playButton.setOnMouseEntered(e -> playButton.setStyle(PLAY_HOVER));
         playButton.setOnMouseExited(e -> playButton.setStyle(PLAY_NORMAL));
-        playButton.setOnAction(e -> playOnClick.run()); // o controller decide o que fazer
+        playButton.setOnAction(e -> playOnClick.run()); // o main.java.controller decide o que fazer
     }
 
     private void toggleConfig() {

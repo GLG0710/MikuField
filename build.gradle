@@ -1,0 +1,33 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.beryx.runtime' version '1.13.1'
+}
+
+runtime {
+    options = ['--strip-debug', '--compress', 'zip-6', '--no-header-files', '--no-man-pages']
+    modules = ['java.desktop', 'java.logging']
+    jpackage {
+        imageName = 'MikuMinefield'
+        installerType = 'app-image'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+javafx {
+    version = '25'
+    modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
+}
+
+application {
+    mainClass = 'Main'
+}

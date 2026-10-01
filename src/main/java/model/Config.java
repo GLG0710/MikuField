@@ -3,8 +3,6 @@ package model;
 import model.utilities.BoardSize;
 import model.utilities.Difficulty;
 
-import java.util.Optional;
-
 public class Config {
     private int boardSize;
     private double difficulty;

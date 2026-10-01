@@ -2,7 +2,6 @@ package controller;
 
 import javafx.scene.media.AudioClip;
 import model.Cell;
-import model.Config;
 import model.Game;
 import model.utilities.BoardSize;
 import model.utilities.Difficulty;
@@ -54,7 +53,7 @@ public class GameController {
 
         if (game.isGameOver()) {
             revealAllMines();
-            playSound("/assets/sounds/boom.mp3");
+            playSound("/assets/sounds/mikudawo.wav");
         }
     }
 
