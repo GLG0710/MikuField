@@ -4,13 +4,32 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
         with:
           distribution: zulu
           java-version: 25
-      - run: ./gradlew jpackage
+      - name: Build jar e libs
+        shell: bash
+        run: ./gradlew jar copyLibs
+      - name: Montar entrada
+        shell: bash
+        run: |
+          mkdir input
+          cp build/libs/*.jar input/
+          cp build/libs-all/*.jar input/
+      - name: jpackage
+        shell: bash
+        run: |
+          MAINJAR=$(ls build/libs/*.jar | head -n1 | xargs basename)
+          jpackage --type app-image \
+            --name MikuMinefield \
+            --input input \
+            --main-jar "$MAINJAR" \
+            --main-class main.java.Main \
+            --java-options "--enable-native-access=ALL-UNNAMED" \
+            --dest dist
       - uses: actions/upload-artifact@v4
         with:
           name: MikuMinefield-windows
-          path: build/jpackage/MikuMinefield
+          path: dist/MikuMinefield
