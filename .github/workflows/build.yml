@@ -26,7 +26,7 @@ jobs:
             --name MikuMinefield \
             --input input \
             --main-jar "$MAINJAR" \
-            --main-class main.java.Main \
+            --main-class Main \
             --java-options "--enable-native-access=ALL-UNNAMED" \
             --dest dist
       - uses: actions/upload-artifact@v4
