@@ -7,12 +7,6 @@ repositories {
     mavenCentral()
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(25)
-    }
-}
-
 javafx {
     version = '25'
     modules = ['javafx.controls', 'javafx.fxml', 'javafx.media']
@@ -20,4 +14,16 @@ javafx {
 
 application {
     mainClass = 'Main'
+    applicationDefaultJvmArgs = ['--enable-native-access=javafx.graphics,javafx.media']
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Main'
+    }
+}
+
+tasks.register('copyLibs', Copy) {
+    from configurations.runtimeClasspath
+    into layout.buildDirectory.dir('libs-all')
 }
